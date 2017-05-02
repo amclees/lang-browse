@@ -1,0 +1,24 @@
+{
+
+  "manifest_version": 2,
+  "name": "LangBrowse",
+  "version": "1.0",
+
+  "description": "Teaches new vocabulary relevent to the current page",
+
+  "icons": {
+    "48": "icons/icon-48.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["page-analysis.js"]
+    }
+  ],
+
+  "background": {
+    "scripts": ["background-handler.js"]
+  }
+
+}

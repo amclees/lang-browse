@@ -1,4 +1,4 @@
-var wordBlacklist = ['the'];
+var wordBlacklist = ['the', 'of', 'and', 'an', 'a', 'be', 'in', 'this', 'when', 'to', 'it', 'can', 'or', 'by', 'as', 'is', 'than', 'for', 'are', 'with', 'if'];
 var trimCharacters = ['"', '.', '?', ',', '!', ';', ':', '(', ')', '“', '”', '+', '-', '0123456789'];
 var trimString = trimCharacters.reduce(function(current, toAdd) {
   return current + toAdd;

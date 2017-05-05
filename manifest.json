@@ -19,6 +19,10 @@
 
   "background": {
     "scripts": ["background-handler.js"]
-  }
+  },
+
+  "web_accessible_resources": [
+    "lib/crossfilter.min.js"
+  ]
 
 }

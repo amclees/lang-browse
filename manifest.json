@@ -22,7 +22,8 @@
   },
 
   "web_accessible_resources": [
-    "lib/crossfilter.min.js"
+    "lib/crossfilter.min.js",
+    "dictionaries/*.json"
   ]
 
 }

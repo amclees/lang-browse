@@ -7,39 +7,47 @@ function loadScript(filename, callback) {
 }
 
 loadScript('crossfilter.min.js', function() {
-  function getHTTP(url){
-    var req = new XMLHttpRequest();
-    req.open('GET', url, false);
-    req.overrideMimeType('application/json'); 
-    req.send();
-    return req.responseText;
-  }
-
-  var engDictUrl = browser.extension.getURL('dictionaries/converted.json');
+  var engDictUrl = browser.extension.getURL('dictionaries/eng.min.json');
   var jpDictUrl = browser.extension.getURL('dictionaries/jmdict_eng.min.json');
   var jpCommonDictUrl = browser.extension.getURL('dictionaries/jmdict_eng_common.min.json');
 
   var engDict = JSON.parse(getHTTP(engDictUrl));
   var jpCommonDict = JSON.parse(getHTTP(jpCommonDictUrl));
+
   var jpWords = crossfilter(jpCommonDict.words);
   var jpEngDefs = jpWords.dimension(function(word) {
-    return word.sense[0].gloss[0].text;
+    return word.sense;
   });
 
   function handleMessage(request, sender, responseFunction) {
-    if(browser.runtime.id === sender.extensionId) {
-      if(request.hasOwnProperty('words')) {
+    if (browser.runtime.id === sender.extensionId) {
+      if (request.hasOwnProperty('words')) {
         handleAnalysis(request.words);
       }
     }
   }
 
   function handleAnalysis(wordHash) {
-    console.log(jpCommonDict);
     console.log(wordHash);
+
+    var wordsByOccurence = sortWords(wordHash);
+
+    var word = selectWord(wordsByOccurence);
+
+    var matchingWords = jpEngDefs.filterFunction(matchingWordFilter(word));
+
+    var occurencesOfWord = occurencesInDefinition(word);
+    var matchingWordsSorted = matchingWords.top(Infinity).sort(function(word1, word2) {
+      return occurencesOfWord(word2) - occurencesOfWord(word1);
+    });
+
+    console.log(matchingWordsSorted);
+  }
+
+  function sortWords(wordHash) {
     var wordsByOccurence = [];
-    for(var word in wordHash) {
-      if(engDict.indexOf(word) != -1) {
+    for (var word in wordHash) {
+      if (engDict.indexOf(word) != -1) {
         wordsByOccurence.push(word);
       }
     }
@@ -47,10 +55,64 @@ loadScript('crossfilter.min.js', function() {
       return wordHash[word2] - wordHash[word1];
     });
     console.log(wordsByOccurence);
-    var matchingWords = jpEngDefs.filterFunction(function(text) {
-      return text.indexOf(wordsByOccurence[0]) !== -1;
-    });
-    console.log(matchingWords.top(Infinity));
+    return wordsByOccurence;
+  }
+
+  function matchingWordFilter(word) {
+    return function(sense) {
+      for (var i = 0; i < sense.length; i++) {
+        for (var j = 0; j < sense[i].gloss.length; j++) {
+          var text = sense[i].gloss[j].text;
+          if (text.indexOf(word) !== -1) {
+            return true;
+          }
+        }
+      }
+      return false;
+    };
+  }
+
+  function occurencesInDefinition(word) {
+    return function(sense) {
+      var occurences = 0;
+      for (var i = 0; i < sense.length; i++) {
+        for (var j = 0; j < sense[i].gloss.length; j++) {
+          var text = sense[i].gloss[j].text;
+          occurences += occurencesOf(text, word);
+        }
+      }
+      return occurences;
+    };
+  }
+
+  function selectWord(wordsByOccurence) {
+    return wordsByOccurence[0];
+  }
+
+  function getHTTP(url) {
+    var req = new XMLHttpRequest();
+    req.open('GET', url, false);
+    req.overrideMimeType('application/json');
+    req.send();
+    return req.responseText;
+  }
+
+  function occurencesOf(text, word) {
+      if (text.length < word.length || word.length === 0) {
+        return 0;
+      }
+      var occurences = 0;
+      var searchFrom = 0;
+      var step = word.length;
+
+      while (searchFrom >= 0) {
+          searchFrom = text.indexOf(word, searchFrom);
+          if (searchFrom !== -1) {
+            occurences++;
+            searchFrom += step;
+          }
+      }
+      return n;
   }
 
   browser.runtime.onMessage.addListener(handleMessage);

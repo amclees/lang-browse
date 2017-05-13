@@ -23,7 +23,13 @@
 
   "web_accessible_resources": [
     "lib/crossfilter.min.js",
+    "popup-receiver.js",
     "dictionaries/*.json"
-  ]
+  ],
+
+  "browser_action": {
+    "default_icon": "icons/icon-48.png",
+    "popup": "popup.html"
+  }
 
 }

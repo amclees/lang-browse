@@ -7,12 +7,17 @@ function loadScript(filename, callback) {
 }
 
 loadScript('crossfilter.min.js', function() {
+  var wordBlacklist = ['the', 'of', 'and', 'an', 'a', 'be', 'in', 'this', 'when', 'to', 'it', 'can', 'or', 'by', 'as', 'is', 'than', 'for', 'are', 'with', 'if', 'am', 'i', 'my'];
+
   var engDictUrl = browser.extension.getURL('dictionaries/eng.min.json');
   var jpDictUrl = browser.extension.getURL('dictionaries/jmdict_eng.min.json');
   var jpCommonDictUrl = browser.extension.getURL('dictionaries/jmdict_eng_common.min.json');
 
+  var startLoadingDicts = Date.now();
   var engDict = JSON.parse(getHTTP(engDictUrl));
   var jpCommonDict = JSON.parse(getHTTP(jpCommonDictUrl));
+  var elapsedLoadingDicts = Date.now() - startLoadingDicts;
+  console.log('Loaded all dictionaries in ' + elapsedLoadingDicts + 'ms');
 
   var jpWords = crossfilter(jpCommonDict.words);
   var jpEngDefs = jpWords.dimension(function(word) {
@@ -21,10 +26,28 @@ loadScript('crossfilter.min.js', function() {
 
   function handleMessage(request, sender, responseFunction) {
     if (browser.runtime.id === sender.extensionId) {
-      if (request.hasOwnProperty('words')) {
-        handleAnalysis(request.words);
+      if (request.hasOwnProperty('texts')) {
+        handleAnalysis(getWords(request.texts));
       }
     }
+  }
+
+  function getWords(texts) {
+    var words = {};
+    for (var i = 0; i < texts.length; i++) {
+      var text = texts[i].trim().toLowerCase().replace(/[^a-z]+/g, ' ');
+      var textWords = text.split(' ');
+      for (var j = 0; j < textWords.length; j++) {
+        var word = textWords[j];
+        if (word === '' || wordBlacklist.indexOf(word) !== -1) continue;
+        if (words.hasOwnProperty(word)) {
+          words[word]++;
+        } else {
+          words[word] = 1;
+        }
+      }
+    }
+    return words;
   }
 
   function handleAnalysis(wordHash) {

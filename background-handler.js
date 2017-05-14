@@ -66,11 +66,11 @@ loadScript('crossfilter.min.js', function() {
 
     console.log(matchingWordsSorted);
 
-    browser.browserAction.setPopup({popup: 'popup.html'});
-    browser.browserAction.enable();
-    browser.runtime.sendMessage({
+    browser.storage.local.set({
       'matchingWords': matchingWordsSorted
     });
+    browser.browserAction.setPopup({popup: "popup.html"})
+    browser.browserAction.enable();
   }
 
   function sortWords(wordHash) {

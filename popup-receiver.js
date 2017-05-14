@@ -1,18 +1,15 @@
 container = document.getElementById('container');
 
-browser.runtime.onMessage.addListener(handleMessage);
-
-function handleMessage(request, sender, responseFunction) {
-  if (browser.runtime.id === sender.extensionId) {
-    if (request.hasOwnProperty('matchingWords')) {
-      setupPopup(request.matchingWords);
-    }
+var localStorage = browser.storage.local.get('matchingWords').then(function(got) {
+  if (got.hasOwnProperty('matchingWords')) {
+    console.log('Setting up popup for new words.');
+    setupPopup(got.matchingWords);
   }
-}
+});
 
 function setupPopup(matchingWords) {
   while (container.hasChildNodes()) {
-    container.removeChild(node.lastChild);
+    container.removeChild(container.lastChild);
   }
 
   for (var i = 0; i < matchingWords.length; i++) {

@@ -6,6 +6,10 @@ function loadScript(filename, callback) {
     document.head.appendChild(scriptElement);
 }
 
+browser.browserAction.setPopup({
+  popup: "popup.html"
+});
+
 loadScript('crossfilter.min.js', function() {
   var wordBlacklist = ['the', 'of', 'and', 'an', 'a', 'be', 'in', 'this', 'when', 'to', 'it', 'can', 'or', 'by', 'as', 'is', 'than', 'for', 'are', 'with', 'if', 'am', 'i', 'my'];
 
@@ -17,7 +21,7 @@ loadScript('crossfilter.min.js', function() {
   var engDict = JSON.parse(getHTTP(engDictUrl));
   var jpCommonDict = JSON.parse(getHTTP(jpCommonDictUrl));
   var elapsedLoadingDicts = Date.now() - startLoadingDicts;
-  console.log('Loaded all dictionaries in ' + elapsedLoadingDicts + 'ms');
+  console.log('Loaded all dictionaries in ' + elapsedLoadingDicts + ' ms');
 
   var jpWords = crossfilter(jpCommonDict.words);
   var jpEngDefs = jpWords.dimension(function(word) {
@@ -64,12 +68,15 @@ loadScript('crossfilter.min.js', function() {
       return occurencesOfWord(word2) - occurencesOfWord(word1);
     });
 
+    if(matchingWordsSorted.length > 5) {
+      matchingWords = matchingWordsSorted.splice(5);
+    }
+
     console.log(matchingWordsSorted);
 
     browser.storage.local.set({
       'matchingWords': matchingWordsSorted
     });
-    browser.browserAction.setPopup({popup: "popup.html"})
     browser.browserAction.enable();
   }
 

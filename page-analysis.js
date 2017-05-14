@@ -10,14 +10,16 @@ function getTexts() {
     }
   }
   var elapsed = Date.now() - start;
-  console.log(elapsed + 'ms elapsed pulling text from DOM');
+  console.log(elapsed + ' ms elapsed pulling text from DOM');
   return texts;
 }
 
-window.setTimeout(function() {
-  texts = getTexts();
-  console.log(texts);
-  browser.runtime.sendMessage({
-    'texts': texts
-  });
-}, 3500);
+if(document.contentType === 'text/html') {
+  window.setTimeout(function() {
+    texts = getTexts();
+    console.log(texts);
+    browser.runtime.sendMessage({
+      'texts': texts
+    });
+  }, 3500);
+}

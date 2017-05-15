@@ -1,13 +1,26 @@
 container = document.getElementById('container');
+var currentWord = '';
+var grabbing = false;
 
-var localStorage = browser.storage.local.get('matchData').then(function(got) {
-  if (got.hasOwnProperty('matchData')) {
-    console.log('Setting up popup for new words.');
-    setupPopup(got.matchData);
-  } else {
-    console.log('No match data in storage');
+grabFromStorage();
+setInterval(grabFromStorage, 500);
+
+function grabFromStorage() {
+  if(grabbing) {
+    return;
   }
-});
+  grabbing = true;
+  var localStorage = browser.storage.local.get('matchData').then(function(got) {
+    if (got.hasOwnProperty('matchData') && got.matchData.word !== currentWord) {
+      console.log('Setting up popup for new words.');
+      currentWord = got.matchData.word;
+      setupPopup(got.matchData);
+    } else {
+      console.log('No match data in storage');
+    }
+    grabbing = false;
+  });
+}
 
 function setupPopup(matchData) {
   document.getElementById('header').innerText = matchData.englishWord;

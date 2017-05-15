@@ -1,4 +1,4 @@
-var validElements = ['p', 'li'];
+var validElements = ['a', 'button', 'label', 'li', 'p', 'td'];
 
 function getTexts() {
   var start = Date.now();

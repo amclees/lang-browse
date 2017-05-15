@@ -1,13 +1,17 @@
 container = document.getElementById('container');
 
-var localStorage = browser.storage.local.get('matchingWords').then(function(got) {
-  if (got.hasOwnProperty('matchingWords')) {
+var localStorage = browser.storage.local.get('matchData').then(function(got) {
+  if (got.hasOwnProperty('matchData')) {
     console.log('Setting up popup for new words.');
-    setupPopup(got.matchingWords);
+    setupPopup(got.matchData);
+  } else {
+    console.log('No match data in storage');
   }
 });
 
-function setupPopup(matchingWords) {
+function setupPopup(matchData) {
+  document.getElementById('header').innerText = matchData.englishWord;
+  var matchingWords = matchData.matchingWords;
   while (container.hasChildNodes()) {
     container.removeChild(container.lastChild);
   }

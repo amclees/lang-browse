@@ -11,7 +11,7 @@ browser.browserAction.setPopup({
 });
 
 loadScript('crossfilter.min.js', function() {
-  var wordBlacklist = ['the', 'of', 'and', 'an', 'a', 'be', 'in', 'this', 'when', 'to', 'it', 'can', 'or', 'by', 'as', 'is', 'than', 'for', 'are', 'with', 'if', 'am', 'i', 'my'];
+  var wordBlacklist = ['the', 'of', 'and', 'an', 'a', 'be', 'in', 'this', 'when', 'to', 'it', 'can', 'or', 'by', 'as', 'is', 'than', 'for', 'are', 'with', 'if', 'am', 'i', 'my', 'that'];
 
   var engDictUrl = browser.extension.getURL('dictionaries/eng.min.json');
   var jpDictUrl = browser.extension.getURL('dictionaries/jmdict_eng.min.json');
@@ -75,7 +75,10 @@ loadScript('crossfilter.min.js', function() {
     console.log(matchingWordsSorted);
 
     browser.storage.local.set({
-      'matchingWords': matchingWordsSorted
+      'matchData' : {
+        'englishWord' : word,
+        'matchingWords': matchingWordsSorted
+      }
     });
     browser.browserAction.enable();
   }

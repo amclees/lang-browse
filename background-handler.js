@@ -63,7 +63,7 @@ loadScript('crossfilter.min.js', function() {
 
     var matchingWords = jpEngDefs.filterFunction(matchingWordFilter(word));
 
-    var occurencesOfWord = occurencesInDefinition(word);
+    var occurencesOfWord = scoreOfDefinition(word);
     var matchingWordsSorted = matchingWords.top(Infinity).sort(function(word1, word2) {
       return occurencesOfWord(word2) - occurencesOfWord(word1);
     });
@@ -111,16 +111,25 @@ loadScript('crossfilter.min.js', function() {
     };
   }
 
-  function occurencesInDefinition(word) {
-    return function(sense) {
-      var occurences = 0;
+  function scoreOfDefinition(word) {
+    return function(dictionaryWord) {
+      sense = dictionaryWord.sense;
+      var score = 0;
       for (var i = 0; i < sense.length; i++) {
+        var senseModifier = sense.length / (2 * i + 1);
+        var senseScore = 0;
         for (var j = 0; j < sense[i].gloss.length; j++) {
+          var glossModifier = sense[i].gloss.length / (j + 1);
           var text = sense[i].gloss[j].text;
-          occurences += occurencesOf(text, word);
+          var density = 0;
+          density = occurencesOf(text, word) / (text.length / 1.5);
+          senseScore += glossModifier * density;
         }
+        score += senseModifier * senseScore;
       }
-      return occurences;
+      console.log("Word " + word + " Score " + score);
+      console.log(sense);
+      return score;
     };
   }
 
@@ -151,7 +160,7 @@ loadScript('crossfilter.min.js', function() {
             searchFrom += step;
           }
       }
-      return n;
+      return occurences;
   }
 
   browser.runtime.onMessage.addListener(handleMessage);

@@ -6,6 +6,12 @@
 
   "description": "Teaches new vocabulary relevent to the current page",
 
+  "applications": {
+    "gecko": {
+      "id": "lang.browse@amclees.com"
+    }
+  },
+
   "icons": {
     "48": "icons/icon-48.png"
   },

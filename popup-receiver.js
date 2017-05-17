@@ -1,4 +1,5 @@
-container = document.getElementById('container');
+var container = document.getElementById('container');
+var hideButton = document.getElementById('hide-button');
 var currentWord = '';
 var grabbing = false;
 
@@ -24,6 +25,9 @@ function grabFromStorage() {
 
 function setupPopup(matchData) {
   document.getElementById('header').innerText = matchData.englishWord;
+  hideButton.onclick = function() {
+    KnowledgeService.setForgetDate(matchData.englishWord, new Date((new Date()).getTime() + 3600000));
+  };
   var matchingWords = matchData.matchingWords;
   while (container.hasChildNodes()) {
     container.removeChild(container.lastChild);

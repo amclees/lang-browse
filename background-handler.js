@@ -2,7 +2,7 @@ browser.browserAction.setPopup({
   popup: "popup.html"
 });
 
-var wordBlacklist = ['the', 'of', 'and', 'an', 'a', 'be', 'in', 'this', 'when', 'to', 'it', 'can', 'or', 'by', 'as', 'is', 'than', 'for', 'are', 'with', 'if', 'am', 'i', 'my', 'that', 'was'];
+var wordBlacklist = ['the', 'of', 'and', 'an', 'at', 'a', 'be', 'in', 'this', 'when', 'to', 'it', 'can', 'or', 'by', 'as', 'is', 'than', 'for', 'are', 'with', 'if', 'am', 'i', 'my', 'that', 'was'];
 
 var engDictUrl = browser.extension.getURL('dictionaries/eng.min.json');
 var jpDictUrl = browser.extension.getURL('dictionaries/jmdict_eng.min.json');
@@ -57,6 +57,19 @@ function handleAnalysis(wordHash) {
 
   var word = selectWord(wordsByOccurence);
 
+  KnowledgeService.shouldShow(word, function(shouldShow) {
+    if(shouldShow && analyzeWord(word)) {
+      console.log('Finished analysis');
+    } else {
+      console.log('Word: ' + word + ' should not be shown, retrying next word.');
+      delete wordHash[word];
+      handleAnalysis(wordHash);
+      return;
+    }
+  });
+}
+
+function analyzeWord(word) {
   var matchingWords = jpEngDefs.filterFunction(matchingWordFilter(word));
 
   var occurencesOfWord = scoreOfDefinition(word);
@@ -65,10 +78,7 @@ function handleAnalysis(wordHash) {
   });
 
   if(matchingWordsSorted.length === 0) {
-    console.log('No definitions found, retrying');
-    delete wordHash[word];
-    handleAnalysis(wordHash);
-    return;
+    return false;
   }
 
   if(matchingWordsSorted.length > 5) {
@@ -84,6 +94,7 @@ function handleAnalysis(wordHash) {
     }
   });
   browser.browserAction.enable();
+  return true;
 }
 
 function sortWords(wordHash) {

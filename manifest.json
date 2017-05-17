@@ -18,11 +18,14 @@
   ],
 
   "background": {
-    "scripts": ["background-handler.js"]
+    "scripts": [
+      "lib/crossfilter.min.js",
+      "knowledge.service.js",
+      "background-handler.js"
+    ]
   },
 
   "web_accessible_resources": [
-    "lib/crossfilter.min.js",
     "popup-receiver.js",
     "dictionaries/*.json"
   ],

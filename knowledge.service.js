@@ -3,6 +3,7 @@ var KnowledgeService = {
     browser.storage.local.get('knownWords').then(function(matchData) {
       console.log(matchData);
       var knownWords = matchData.knownWords;
+      if (!knownWords) knownWords = {};
       if (knownWords.hasOwnProperty(word)) {
         callback(new Date() > new Date(matchData.word));
       } else {
@@ -18,6 +19,7 @@ var KnowledgeService = {
   setForgetDate: function(word, date) {
     browser.storage.local.get('knownWords').then(function(matchData) {
       var knownWords = matchData.knownWords;
+      if (!knownWords) knownWords = {};
       console.log('Forget date for: ' + word);
       console.log(date);
       knownWords[word] = date;

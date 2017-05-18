@@ -6,6 +6,8 @@
 
   "description": "Teaches new vocabulary relevent to the current page",
 
+  "content_security_policy": "",
+
   "applications": {
     "gecko": {
       "id": "lang.browse@amclees.com"

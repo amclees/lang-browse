@@ -1,8 +1,11 @@
 var container = document.getElementById('container');
-var hideButton = document.getElementById('hide-button');
+var knowledgeTime = document.getElementById('knowledge-time');
+var knowledgeButton = document.getElementById('knowledge-button');
+var knowledgeInput = document.getElementById('knowledge-input');
 var currentWord = '';
 var grabbing = false;
 
+textUpdate(knowledgeInput.value);
 grabFromStorage();
 setInterval(grabFromStorage, 500);
 
@@ -25,9 +28,7 @@ function grabFromStorage() {
 
 function setupPopup(matchData) {
   document.getElementById('header').innerText = matchData.englishWord;
-  hideButton.onclick = function() {
-    KnowledgeService.setForgetDate(matchData.englishWord, new Date((new Date()).getTime() + 3600000));
-  };
+  knowledgeButton.onclick = knowledgeHandler(matchData);
   var matchingWords = matchData.matchingWords;
   while (container.hasChildNodes()) {
     container.removeChild(container.lastChild);
@@ -74,4 +75,72 @@ function getWordDisplay(word) {
   wordDiv.appendChild(meaningsDiv);
 
   return wordDiv;
+}
+
+function knowledgeHandler(matchData) {
+  return function() {
+    console.log(getForgetDate());
+    KnowledgeService.setForgetDate(matchData.englishWord, getForgetDate());
+  };
+}
+
+function getLogarithmic(value) {
+  return Math.pow(10, value);
+}
+
+function getFormattedTime(seconds) {
+  var counter = 0;
+  var formatted = '';
+  seconds = Math.floor(seconds);
+  var months = Math.floor(seconds / (86400 * 30));
+  if (months !== 0) {
+    formatted += months + ' months ';
+    counter++;
+  }
+  if (counter >= 2) return formatted;
+  seconds %= (86400 * 30);
+  var days = Math.floor(seconds / 86400);
+  if (days !== 0) {
+    formatted += days + ' days ';
+    counter++;
+  }
+  if (counter >= 2) return formatted;
+  seconds %= 86400;
+  var hours = Math.floor(seconds / 3600);
+  if (hours !== 0) {
+    formatted += hours + ' hours ';
+    counter++;
+  }
+  if (counter >= 2) return formatted;
+  seconds %= 3600;
+  var minutes = Math.floor(seconds / 60);
+  if (minutes !== 0) {
+    formatted += minutes + ' minutes ';
+    counter++;
+  }
+  if (counter >= 2) return formatted;
+  seconds %= 60;
+  if (seconds !== 0) {
+    formatted += seconds + ' seconds';
+    counter++;
+  }
+  return formatted;
+}
+
+function getForgetDate() {
+  var value = knowledgeInput.value;
+  if (value > knowledgeInput.max - (knowledgeInput.max * 0.05)) {
+    return new Date(Number.MAX_SAFE_INTEGER);
+  } else {
+    var seconds = getLogarithmic(value / 125000);
+    return new Date((new Date()).getTime() + (seconds * 1000));
+  }
+}
+
+function textUpdate(value) {
+  if (value > knowledgeInput.max - (knowledgeInput.max * 0.05)) {
+    knowledgeTime.innerText = "Forever";
+  } else {
+    knowledgeTime.innerText = getFormattedTime(getLogarithmic(value / 125000));
+  }
 }

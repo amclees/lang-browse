@@ -1,14 +1,23 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="" />
     <link rel="stylesheet" href="styles/bootstrap.min.css" />
     <link rel="stylesheet" href="styles/popup.css" />
   </head>
   <body>
     <div class="container">
-      <h2 id="header">Vocabulary</h4>
-      <button id="hide-button" class="btn btn-danger">Don't show for 1 hour</button>
+      <h2 id="header">Vocabulary</h2>
+      <div>
+        <input type="range"
+        min="0"
+        max="1000000"
+        id="knowledge-input"
+        oninput="textUpdate(this.value)" />
+        <p>Don't show me this word for <span id="knowledge-time"></span></p>
+        <button id="knowledge-button" class="btn btn-success">Apply</button>
+      </div>
       <div id="container">
         <hr />
         <p>No words now, try visiting a new page.</p>

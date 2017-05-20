@@ -6,6 +6,19 @@ var currentWord = '';
 var grabbing = false;
 
 textUpdate(knowledgeInput.value);
+var sliderHandler = function() {
+  window.requestAnimationFrame(function() {
+    textUpdate(knowledgeInput.value);
+  });
+};
+knowledgeInput.addEventListener("mousedown", function() {
+  sliderHandler();
+  knowledgeInput.addEventListener("mousemove", sliderHandler);
+});
+knowledgeInput.addEventListener("mouseup", function() {
+  knowledgeInput.removeEventListener("mousemove", sliderHandler);
+});
+
 grabFromStorage();
 setInterval(grabFromStorage, 500);
 
@@ -130,7 +143,7 @@ function getFormattedTime(seconds) {
 function getForgetDate() {
   var value = knowledgeInput.value;
   if (value > knowledgeInput.max - (knowledgeInput.max * 0.05)) {
-    return new Date(Number.MAX_SAFE_INTEGER);
+    return new Date(Number.MAX_SAFE_INTEGER / 2);
   } else {
     var seconds = getLogarithmic(value / 125000);
     return new Date((new Date()).getTime() + (seconds * 1000));

@@ -130,13 +130,12 @@ function scoreOfDefinition(word) {
     sense = dictionaryWord.sense;
     var score = 0;
     for (var i = 0; i < sense.length; i++) {
-      var senseModifier = sense.length / (2 * i + 1);
+      var senseModifier = 1 + (1 / (2 * i + 1));
       var senseScore = 0;
       for (var j = 0; j < sense[i].gloss.length; j++) {
-        var glossModifier = sense[i].gloss.length / (j + 1);
+        var glossModifier = 1 + (1 / (j + 1));
         var text = sense[i].gloss[j].text;
-        var density = 0;
-        density = (occurencesOf(text, word) * word.length) / (text.length);
+        var density = (occurencesOf(text, word) * word.length) / (text.length);
         senseScore += glossModifier * density;
       }
       score += senseModifier * senseScore;
@@ -157,6 +156,8 @@ function getHTTP(url) {
   return req.responseText;
 }
 
+var auxillaries = [' ', 's', 'e'];
+
 function occurencesOf(text, word) {
     if (text.length < word.length || word.length === 0) {
       return 0;
@@ -168,8 +169,14 @@ function occurencesOf(text, word) {
     while (searchFrom >= 0) {
         searchFrom = text.indexOf(word, searchFrom);
         if (searchFrom !== -1) {
-          occurences++;
           searchFrom += step;
+          if (searchFrom + 1 < word.length && auxillaries.indexOf(word[searchFrom + 1]) !== -1) {
+            continue;
+          }
+          if (searchFrom - 1 > 0 && auxillaries.indexOf(word[searchFrom - 1]) !== -1) {
+            continue;
+          }
+          occurences++;
         }
     }
     return occurences;

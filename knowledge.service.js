@@ -5,7 +5,8 @@ var KnowledgeService = {
       var knownWords = matchData.knownWords;
       if (!knownWords) knownWords = {};
       if (knownWords.hasOwnProperty(word)) {
-        callback(new Date() > new Date(matchData.word));
+        console.log(knownWords[word]);
+        callback(new Date() > new Date(knownWords[word]));
       } else {
         console.log('Word not in storage: ' + word);
         callback(true);

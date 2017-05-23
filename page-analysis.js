@@ -1,25 +1,44 @@
 var validElements = ['a', 'button', 'label', 'li', 'p', 'td'];
+var elementTimeout = 5;
 
-function getTexts() {
+function getTexts(callback) {
   var start = Date.now();
   var texts = [];
-  for (var i = 0; i < validElements.length; i++) {
-    var pageElements = document.getElementsByTagName(validElements[i]);
-    for (var j = 0; j < pageElements.length; j++) {
-      texts.push(pageElements[j].innerText);
+  nextElement();
+
+  function nextElement() {
+    if (validElements.length === 0) {
+      callback(texts);
+      return;
+    }
+    tag = validElements.pop();
+
+    var pageElements = document.getElementsByTagName(tag);
+    var element = 0;
+    nextPageElement();
+
+    function nextPageElement() {
+      if (pageElements.length === element) {
+        nextElement();
+        return;
+      }
+      if(Date.now() - start > 15000) {
+        console.log('Too many elements, terminating early');
+        nextElement();
+        return;
+      }
+      texts.push(pageElements[element].innerText);
+      element += 1;
+      setTimeout(nextPageElement, elementTimeout);
     }
   }
-  var elapsed = Date.now() - start;
-  console.log(elapsed + ' ms elapsed pulling text from DOM');
-  return texts;
 }
 
-if(document.contentType === 'text/html') {
-  window.setTimeout(function() {
-    texts = getTexts();
+if (document.contentType === 'text/html') {
+  getTexts(function(texts) {
     console.log(texts);
     browser.runtime.sendMessage({
       'texts': texts
     });
-  }, 3500);
+  });
 }

@@ -170,14 +170,15 @@ function occurencesOf(text, word) {
         searchFrom = text.indexOf(word, searchFrom);
         if (searchFrom !== -1) {
           searchFrom += step;
-          if (searchFrom + 1 < word.length && auxillaries.indexOf(word[searchFrom + 1]) !== -1) {
-            continue;
+          if (searchFrom >= word.length) {
+            occurences++;
+            break;
+          } else if (auxillaries.indexOf(word[searchFrom + 1]) !== -1) {
+            searchFrom++;
+            occurences++;
           }
-          if (searchFrom - 1 > 0 && auxillaries.indexOf(word[searchFrom - 1]) !== -1) {
-            continue;
-          }
-          occurences++;
         }
     }
+    console.log(occurences + ' of ' + word + ' in ' + text);
     return occurences;
 }

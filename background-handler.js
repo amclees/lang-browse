@@ -163,7 +163,6 @@ function occurencesOf(text, word) {
     var occurences = 0;
     var searchFrom = 0;
     var step = word.length;
-
     while (searchFrom >= 0) {
         searchFrom = text.indexOf(word, searchFrom);
         if (searchFrom !== -1) {
@@ -179,12 +178,9 @@ function occurencesOf(text, word) {
             searchFrom++;
             occurences++;
           } else {
-            console.log(' due to char ' + text[searchFrom] + ' doing:');
             searchFrom -= step - 1;
-            console.log('running back to ' + searchFrom);
           }
         }
     }
-    console.log(occurences + ' of ' + word + ' in ' + text);
     return occurences;
 }

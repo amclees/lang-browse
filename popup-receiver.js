@@ -98,7 +98,7 @@ function getWordDisplay(word) {
     var listItem = document.createElement('li');
     listItem.innerText = meaning.gloss.map(function(item) {
       return item.text;
-    }).join(', ');
+    }).join('; ');
     meaningsList.appendChild(listItem);
   }
 

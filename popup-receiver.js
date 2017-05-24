@@ -27,7 +27,7 @@ moreButton.onclick = function() {
 };
 
 grabFromStorage();
-setInterval(grabFromStorage, 500);
+var interval = setInterval(grabFromStorage, 500);
 
 function grabFromStorage() {
   if(grabbing) {
@@ -39,6 +39,10 @@ function grabFromStorage() {
       console.log('Setting up popup for new words.');
       currentWord = got.matchData.word;
       setupPopup(got.matchData);
+      if (interval !== null) {
+        window.clearInterval(interval);
+        interval = null;
+      }
     } else {
       console.log('No match data in storage');
     }

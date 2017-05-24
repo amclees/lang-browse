@@ -1,3 +1,5 @@
+browser.storage.local.remove('matchData');
+
 var validElements = ['a', 'button', 'label', 'li', 'p', 'td'];
 var elementTimeout = 5;
 

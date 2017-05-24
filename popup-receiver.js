@@ -4,6 +4,7 @@ var knowledgeButton = document.getElementById('knowledge-button');
 var knowledgeInput = document.getElementById('knowledge-input');
 var knowledgeSuccess = document.getElementById('knowledge-success');
 var knowledgeSet = document.getElementById('knowledge-set');
+var knowledgeContainer = document.getElementById('knowledge-container');
 var moreButton = document.getElementById('more-button');
 var currentWord = '';
 var currentMatchData = null;
@@ -53,6 +54,7 @@ function grabFromStorage() {
 
 function setupPopup(matchData) {
   knowledgeSuccess.style = 'display: none;';
+  knowledgeContainer.style = '';
   document.getElementById('header').innerText = matchData.englishWord;
   knowledgeButton.onclick = knowledgeHandler(matchData);
   currentMatchData = matchData;
@@ -119,7 +121,7 @@ function knowledgeHandler(matchData) {
     var date = getForgetDate();
     console.log(date);
     knowledgeSuccess.style = '';
-    knowledgeSet.innerText = (date.getTime() < Number.MAX_SAFE_INTEGER / 4 ? date.toLocaleString() : 'never') + '.';
+    knowledgeSet.innerText = date.getTime() < Number.MAX_SAFE_INTEGER / 4 ? date.toLocaleString() : 'never';
     KnowledgeService.setForgetDate(matchData.englishWord, date);
   };
 }

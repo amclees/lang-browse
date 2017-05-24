@@ -9,20 +9,20 @@
   <body>
     <div class="container">
       <h2 id="header">Vocabulary</h2>
-      <div>
+      <div id="knowledge-container" style="display: none;">
         <input type="range"
         min="0"
         max="1000000"
         id="knowledge-input" />
-        <p>Don't show me this word for <span id="knowledge-time"></span></p>
+        <p>Don't show me this word for<br /><span id="knowledge-time"></span></p>
         <button id="knowledge-button" class="btn btn-success">Apply</button>
-        <p id="knowledge-success" style="display: none;">Successfully set forget date to <span id="knowledge-set"></span></p>
+        <p id="knowledge-success" style="display: none;">Successfully set forget date to <br /><span id="knowledge-set"></span></p>
       </div>
       <div id="container">
         <hr />
         <p>No words now, try visiting a new page.</p>
       </div>
-      <button id="more-button" class="btn btn-primary">Display next words</button>
+      <button id="more-button" class="btn btn-primary" style="display: none;">Display next words</button>
     </div>
     <script src="knowledge.service.js"></script>
     <script src="popup-receiver.js"></script>

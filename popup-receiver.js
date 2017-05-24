@@ -2,7 +2,10 @@ var container = document.getElementById('container');
 var knowledgeTime = document.getElementById('knowledge-time');
 var knowledgeButton = document.getElementById('knowledge-button');
 var knowledgeInput = document.getElementById('knowledge-input');
+var knowledgeForm = document.getElementById('knowledge-form');
+var moreButton = document.getElementById('more-button');
 var currentWord = '';
+var currentMatchData = null;
 var grabbing = false;
 
 textUpdate(knowledgeInput.value);
@@ -18,6 +21,10 @@ knowledgeInput.addEventListener("mousedown", function() {
 knowledgeInput.addEventListener("mouseup", function() {
   knowledgeInput.removeEventListener("mousemove", sliderHandler);
 });
+
+moreButton.onclick = function() {
+  displayNext(5);
+};
 
 grabFromStorage();
 setInterval(grabFromStorage, 500);
@@ -42,15 +49,26 @@ function grabFromStorage() {
 function setupPopup(matchData) {
   document.getElementById('header').innerText = matchData.englishWord;
   knowledgeButton.onclick = knowledgeHandler(matchData);
-  var matchingWords = matchData.matchingWords;
+  currentMatchData = matchData;
+
+  displayNext(5);
+}
+
+function displayNext(number) {
   while (container.hasChildNodes()) {
     container.removeChild(container.lastChild);
   }
-
-  for (var i = 0; i < matchingWords.length; i++) {
-    var word = matchingWords[i];
+  var displayWords = currentMatchData.matchingWords.splice(0, number);
+  for (var i = 0; i < displayWords.length; i++) {
+    var word = displayWords[i];
     container.appendChild(document.createElement('hr'));
-    container.appendChild(getWordDisplay(word));
+    var element = getWordDisplay(word);
+    container.appendChild(element);
+  }
+  if (currentMatchData.matchingWords.length === 0) {
+    moreButton.style = 'display: none;';
+  } else {
+    moreButton.style = '';
   }
 }
 
@@ -61,9 +79,9 @@ function getWordDisplay(word) {
 
   var header = document.createElement('h3');
   var headerText = '';
-  if(kana.length === 0) {
+  if (kana.length === 0) {
     headerText = kanji[0].text;
-  } else if(kanji.length === 0 || !kanji[0].common) {
+  } else if (kanji.length === 0 || !kanji[0].common) {
     headerText = kana[0].text;
   } else {
     headerText = kanji[0].text + ' (' + kana[0].text + ')';
@@ -71,7 +89,7 @@ function getWordDisplay(word) {
   header.innerText = headerText;
 
   var meaningsList = document.createElement('ol');
-  for(var i = 0; i < meanings.length; i++) {
+  for (var i = 0; i < meanings.length; i++) {
     var meaning = meanings[i];
     var listItem = document.createElement('li');
     listItem.innerText = meaning.gloss.map(function(item) {

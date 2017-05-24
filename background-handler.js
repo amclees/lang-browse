@@ -81,9 +81,7 @@ function analyzeWord(word) {
     return false;
   }
 
-  if(matchingWordsSorted.length > 5) {
-    matchingWords = matchingWordsSorted.splice(5);
-  }
+  matchingWordsSorted = matchingWordsSorted.splice(0, 25);
 
   console.log(matchingWordsSorted);
 
@@ -170,6 +168,7 @@ function occurencesOf(text, word) {
         searchFrom = text.indexOf(word, searchFrom);
         if (searchFrom !== -1) {
           searchFrom += step;
+          // TODO Require auxillary before word
           if (searchFrom >= word.length) {
             occurences++;
             break;

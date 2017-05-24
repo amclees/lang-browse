@@ -167,14 +167,21 @@ function occurencesOf(text, word) {
     while (searchFrom >= 0) {
         searchFrom = text.indexOf(word, searchFrom);
         if (searchFrom !== -1) {
+          if (searchFrom > 0 && auxillaries.indexOf(text[searchFrom - 1]) === -1) {
+            searchFrom++;
+            continue;
+          }
           searchFrom += step;
-          // TODO Require auxillary before word
-          if (searchFrom >= word.length) {
+          if (searchFrom >= text.length) {
             occurences++;
             break;
-          } else if (auxillaries.indexOf(word[searchFrom + 1]) !== -1) {
+          } else if (auxillaries.indexOf(text[searchFrom]) !== -1) {
             searchFrom++;
             occurences++;
+          } else {
+            console.log(' due to char ' + text[searchFrom] + ' doing:');
+            searchFrom -= step - 1;
+            console.log('running back to ' + searchFrom);
           }
         }
     }

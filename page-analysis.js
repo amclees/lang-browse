@@ -37,10 +37,12 @@ function getTexts(callback) {
 }
 
 if (document.contentType === 'text/html') {
-  getTexts(function(texts) {
-    console.log(texts);
-    browser.runtime.sendMessage({
-      'texts': texts
+  setTimeout(function() {
+    getTexts(function(texts) {
+      console.log(texts);
+      browser.runtime.sendMessage({
+        'texts': texts
+      });
     });
-  });
+  }, 500);
 }

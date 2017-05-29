@@ -133,7 +133,7 @@ function scoreOfDefinition(word) {
       for (var j = 0; j < sense[i].gloss.length; j++) {
         var glossModifier = 1 + (1 / (j + 1));
         var text = sense[i].gloss[j].text;
-        var density = (occurencesOf(text, word) * word.length) / (text.length);
+        var density = (occurencesScore(text, word) * word.length) / (text.length);
         senseScore += glossModifier * density;
       }
       score += senseModifier * senseScore;
@@ -154,33 +154,31 @@ function getHTTP(url) {
   return req.responseText;
 }
 
-var auxillaries = [' ', 's', 'e'];
+var seperators = [' ', ',', ';', ':', '-', '(', ')'];
 
-function occurencesOf(text, word) {
-    if (text.length < word.length || word.length === 0) {
-      return 0;
+function occurencesScore(text, word) {
+  if (text.length < word.length || word.length === 0) {
+    return 0;
+  }
+  var occurences = 0;
+  var currentWord = '';
+  for (var i = 0; i < text.length; i++) {
+    var char = text[i];
+    var isLast = i + 1 === text.length;
+    var isSeperator = seperators.indexOf(char) !== -1;
+    if (!isLast && !isSeperator) {
+      currentWord += char;
+    } else {
+      if (isLast && !isSeperator) {
+        currentWord += char;
+      }
+      if (currentWord === word) {
+        occurences++;
+      } else if (currentWord.indexOf(word) !== -1) {
+        occurences += 0.4 * (word.length / currentWord.length);
+      }
+      currentWord = '';
     }
-    var occurences = 0;
-    var searchFrom = 0;
-    var step = word.length;
-    while (searchFrom >= 0) {
-        searchFrom = text.indexOf(word, searchFrom);
-        if (searchFrom !== -1) {
-          if (searchFrom > 0 && auxillaries.indexOf(text[searchFrom - 1]) === -1) {
-            searchFrom++;
-            continue;
-          }
-          searchFrom += step;
-          if (searchFrom >= text.length) {
-            occurences++;
-            break;
-          } else if (auxillaries.indexOf(text[searchFrom]) !== -1) {
-            searchFrom++;
-            occurences++;
-          } else {
-            searchFrom -= step - 1;
-          }
-        }
-    }
-    return occurences;
+  }
+  return occurences;
 }

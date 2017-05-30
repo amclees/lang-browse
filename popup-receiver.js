@@ -28,11 +28,29 @@ moreButton.onclick = function() {
   displayNext(5);
 };
 
+var loadingInterval = setInterval(handleLoadingMessage, 500);
+
+var handlingLoadingMessage = false;
+function handleLoadingMessage() {
+  if (handlingLoadingMessage) {
+    return;
+  }
+  handlingLoadingMessage = true;
+  browser.storage.local.get('loading').then(function(got) {
+    if (got.hasOwnProperty('loading')) {
+      addLoadingText();
+    }
+    browser.storage.local.remove('loading').then(function() {
+      handlingLoadingMessage = false;
+    });
+  });
+}
+
 grabFromStorage();
-var interval = setInterval(grabFromStorage, 500);
+var interval = setInterval(grabFromStorage, 200);
 
 function grabFromStorage() {
-  if(grabbing) {
+  if (grabbing) {
     return;
   }
   grabbing = true;
@@ -45,11 +63,25 @@ function grabFromStorage() {
         window.clearInterval(interval);
         interval = null;
       }
+      if(loadingInterval !== null) {
+        window.clearInterval(loadingInterval);
+        loadingInterval = null;
+      }
     } else {
       console.log('No match data in storage');
     }
     grabbing = false;
   });
+}
+
+function addLoadingText() {
+  while (container.hasChildNodes()) {
+    container.removeChild(container.lastChild);
+  }
+  container.appendChild(document.createElement('hr'));
+  var loadingText = document.createElement('p');
+  loadingText.innerText = 'Analyzing page...';
+  container.appendChild(loadingText);
 }
 
 function setupPopup(matchData) {

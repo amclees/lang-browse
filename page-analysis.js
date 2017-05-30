@@ -37,6 +37,9 @@ function getTexts(callback) {
 }
 
 if (document.contentType === 'text/html') {
+  browser.storage.local.set({
+    'loading': true
+  });
   setTimeout(function() {
     getTexts(function(texts) {
       console.log(texts);
@@ -44,5 +47,5 @@ if (document.contentType === 'text/html') {
         'texts': texts
       });
     });
-  }, 500);
+  }, 250);
 }

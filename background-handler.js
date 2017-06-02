@@ -50,16 +50,23 @@ function getWords(texts) {
   return words;
 }
 
+var analysisCallCount = 0;
 function handleAnalysis(wordHash) {
   console.log(wordHash);
+  // Call count is to prevent stack overflow when no valid words are found.
+  if (++analysisCallCount > 1000) {
+    return;
+  }
 
   var wordsByOccurence = sortWords(wordHash);
 
   var word = selectWord(wordsByOccurence);
 
+  
   KnowledgeService.shouldShow(word, function(shouldShow) {
-    if(shouldShow && analyzeWord(word)) {
+    if (shouldShow && analyzeWord(word)) {
       console.log('Finished analysis');
+      analysisCallCount = 0;
     } else {
       console.log('Word: ' + word + ' should not be shown, retrying next word.');
       delete wordHash[word];

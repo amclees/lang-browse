@@ -10,11 +10,11 @@ var jpCommonDictUrl = browser.extension.getURL('dictionaries/jmdict_eng_common.m
 
 var startLoadingDicts = Date.now();
 var engDict = JSON.parse(getHTTP(engDictUrl));
-var jpCommonDict = JSON.parse(getHTTP(jpCommonDictUrl));
+var jpDict = JSON.parse(getHTTP(jpDictUrl));
 var elapsedLoadingDicts = Date.now() - startLoadingDicts;
 console.log('Loaded all dictionaries in ' + elapsedLoadingDicts + ' ms');
 
-var jpWords = crossfilter(jpCommonDict.words);
+var jpWords = crossfilter(jpDict.words);
 var jpEngDefs = jpWords.dimension(function(word) {
   return word.sense;
 });
@@ -62,7 +62,7 @@ function handleAnalysis(wordHash) {
 
   var word = selectWord(wordsByOccurence);
 
-  
+
   KnowledgeService.shouldShow(word, function(shouldShow) {
     if (shouldShow && analyzeWord(word)) {
       console.log('Finished analysis');

@@ -9,6 +9,7 @@ var moreButton = document.getElementById('more-button');
 var currentWord = '';
 var currentMatchData = null;
 var grabbing = false;
+var tags = JSON.parse(getHTTP('dictionaries/tags.json')).tags;
 
 textUpdate(knowledgeInput.value);
 var sliderHandler = function() {
@@ -16,12 +17,12 @@ var sliderHandler = function() {
     textUpdate(knowledgeInput.value);
   });
 };
-knowledgeInput.addEventListener("mousedown", function() {
+knowledgeInput.addEventListener('mousedown', function() {
   sliderHandler();
-  knowledgeInput.addEventListener("mousemove", sliderHandler);
+  knowledgeInput.addEventListener('mousemove', sliderHandler);
 });
-knowledgeInput.addEventListener("mouseup", function() {
-  knowledgeInput.removeEventListener("mousemove", sliderHandler);
+knowledgeInput.addEventListener('mouseup', function() {
+  knowledgeInput.removeEventListener('mousemove', sliderHandler);
 });
 
 moreButton.onclick = function() {
@@ -126,17 +127,30 @@ function getWordDisplay(word) {
   } else {
     headerText = kanji[0].text + ' (' + kana[0].text + ')';
   }
-  header.innerText = headerText;
+  header.innerText = headerText + ' ';
 
   var meaningsList = document.createElement('ol');
+  var partsOfSpeech = [];
   for (var i = 0; i < meanings.length; i++) {
     var meaning = meanings[i];
+    for(var j = 0; j < meaning.partOfSpeech.length; j++) {
+      partsOfSpeech.push(meaning.partOfSpeech[j]);
+    }
     var listItem = document.createElement('li');
     listItem.innerText = meaning.gloss.map(function(item) {
       return item.text;
     }).join('; ');
     meaningsList.appendChild(listItem);
   }
+
+  partsOfSpeech = partsOfSpeech.filter(function(part, index, array) {
+    return array.indexOf(part) == index && part !== '?';
+  }).map(function(part) {
+    return tags[part];
+  });
+  tagHolder = document.createElement('small');
+  tagHolder.innerText = partsOfSpeech.join(', ');
+  header.appendChild(tagHolder);
 
   var meaningsDiv = document.createElement('div');
   meaningsDiv.appendChild(meaningsList);
@@ -217,4 +231,12 @@ function textUpdate(value) {
   } else {
     knowledgeTime.innerText = getFormattedTime(getLogarithmic(value / 125000));
   }
+}
+
+function getHTTP(url) {
+  var req = new XMLHttpRequest();
+  req.open('GET', url, false);
+  req.overrideMimeType('application/json');
+  req.send();
+  return req.responseText;
 }

@@ -6,8 +6,6 @@
 
   "description": "Teaches new vocabulary relevent to the current page",
 
-  "content_security_policy": "",
-
   "applications": {
     "gecko": {
       "id": "lang.browse@amclees.com"
@@ -40,7 +38,7 @@
 
   "browser_action": {
     "default_icon": "icons/icon-48.png",
-    "popup": "popup.html"
+    "default_popup": "popup.html"
   },
 
   "permissions": [
